@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model bookings {
+  booking_id Int       @id @default(autoincrement())
+  room_id    Int?
+  check_in   DateTime? @db.DateTime(0)
+  check_out  DateTime? @db.DateTime(0)
+  no_client  Int?
+  user_id    Int?
+  user       user?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "bookings_ibfk_1")
+  rooms      rooms?    @relation(fields: [room_id], references: [room_id], onDelete: Cascade, map: "bookings_ibfk_2")
+
+  @@index([room_id], map: "room_id")
+  @@index([user_id], map: "user_id")
+}
+
+model comments {
+  cmt_id       Int       @id @default(autoincrement())
+  user_id      Int?
+  datetime_cmt DateTime? @db.DateTime(0)
+  text         String?   @db.Text
+  star_cmt     Int?
+  user         user?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "comments_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model locations {
+  locate_id     Int     @id @default(autoincrement())
+  name_location String? @db.VarChar(100)
+  province      String? @db.VarChar(100)
+  nation        String? @db.VarChar(100)
+  image         String? @db.Text
+  rooms         rooms[]
+}
+
+model rooms {
+  room_id         Int        @id @default(autoincrement())
+  room_name       String?    @db.VarChar(100)
+  client          Int?
+  bedroom         Int?
+  bed             Int?
+  bathroom        Int?
+  description     String?    @db.Text
+  price           Int?
+  washing_machine Boolean
+  iron            Boolean
+  tivi            Boolean
+  air_condition   Boolean
+  wifi            Boolean
+  kitchen         Boolean
+  parking         Boolean
+  pool            Boolean?
+  image           String?    @db.Text
+  locate_id       Int?
+  bookings        bookings[]
+  locations       locations? @relation(fields: [locate_id], references: [locate_id], onDelete: Cascade, map: "locate_id")
+
+  @@index([locate_id], map: "locate_id")
+}
+
+model user {
+  user_id      Int        @id @default(autoincrement())
+  user_name    String?    @db.VarChar(100)
+  email        String?    @db.VarChar(100)
+  pass_word    String?    @db.VarChar(100)
+  phone_number String?    @db.VarChar(100)
+  birth_day    String?    @db.VarChar(100)
+  gender       String?    @db.VarChar(100)
+  role         String?    @db.VarChar(100)
+  bookings     bookings[]
+  comments     comments[]
+}
