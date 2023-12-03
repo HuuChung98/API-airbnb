@@ -75,6 +75,7 @@ model user {
   birth_day    String?    @db.VarChar(100)
   gender       String?    @db.VarChar(100)
   role         String?    @db.VarChar(100)
+  avatar       String?    @db.Text
   bookings     bookings[]
   comments     comments[]
 }
