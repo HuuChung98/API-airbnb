@@ -1,26 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { PrismaClient } from '@prisma/client';
+
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+
+  prisma = new PrismaClient();
+
+  async login(loginAuthDto) {
+    try {
+      let { email, pass_word } = loginAuthDto;
+
+      console.log(email);
+
+      let checkEmail = await this.prisma.user.findFirst({
+        where: { email }
+      });
+      if (checkEmail) {
+        if (checkEmail.pass_word === pass_word) {
+          return {
+            message: "Login successful",
+            content: checkEmail
+          }
+        }
+      }
+    } catch (error) {
+      return "error server";
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async register(registerAuthDto) {
+    try {
+      let infoUser = await this.prisma.user.create({
+        data: {...registerAuthDto}
+      });
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      if (infoUser) {
+        return {
+          message: "Created user",
+          content: {...registerAuthDto}
+        }
+      }
+    } catch (error) {
+      return "error server";
+    }
   }
 }
