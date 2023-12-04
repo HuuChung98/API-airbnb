@@ -27,9 +27,12 @@ model comments {
   datetime_cmt DateTime? @db.DateTime(0)
   text         String?   @db.Text
   star_cmt     Int?
+  room_id      Int?
   user         user?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "comments_ibfk_1")
+  rooms        rooms?    @relation(fields: [room_id], references: [room_id], onDelete: Cascade, map: "room_id")
 
   @@index([user_id], map: "user_id")
+  @@index([room_id], map: "room_id")
 }
 
 model locations {
@@ -61,6 +64,7 @@ model rooms {
   image           String?    @db.Text
   locate_id       Int?
   bookings        bookings[]
+  comments        comments[]
   locations       locations? @relation(fields: [locate_id], references: [locate_id], onDelete: Cascade, map: "locate_id")
 
   @@index([locate_id], map: "locate_id")

@@ -1,34 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 
-@Controller('rooms')
+@Controller('api/rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
-  @Post()
-  create(@Body() createRoomDto: CreateRoomDto) {
-    return this.roomsService.create(createRoomDto);
+  @Post('create-room')
+  createRoom(@Body() createRoomDto: CreateRoomDto) {
+    return this.roomsService.createRoom(createRoomDto);
   }
 
   @Get()
-  findAll() {
-    return this.roomsService.findAll();
+  getRooms() {
+    return this.roomsService.getRooms();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(+id);
+  @Get('get-rooms/:location_id')
+  getRoomsByLocation(@Param('location_id') location_id: string) {
+    return this.roomsService.getRoomsByLocation(+location_id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
+  @Get('pagination')
+  paginationSearch(@Query('index') pageIndex: String, @Query('size') pageSize: String, @Query('keyword') keyword: String) {
+    return this.roomsService.paginationSearch(+pageIndex, +pageSize, keyword)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(+id);
+  @Get(':room_id')
+  infoRentRoom(@Param('room_id') room_id: String) {
+    return this.roomsService.infoRentRoom(+room_id)
+  }
+
+  @Patch('update-room/:id')
+  updateRoom(@Param('id') id: string, @Body() createRoomDto: CreateRoomDto) {
+    return this.roomsService.updateRoom(+id, createRoomDto);
+  }
+
+  @Delete('delete-room/:id')
+  removeRoom(@Param('id') id: string) {
+    return this.roomsService.removeRoom(+id);
   }
 }

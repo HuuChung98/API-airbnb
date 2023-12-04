@@ -78,8 +78,6 @@ export class UsersService {
 
   async paginativeUser(pageIndex, pageSize, keyword) {
     try {
-      console.log(pageIndex);
-      console.log(pageSize);
       let skip = (pageIndex - 1) * pageSize;
 
       let pag_User = await this.prisma.user.findMany({
